@@ -1,9 +1,8 @@
-const globalStateStore = {
-  currentRoad: null,
-  lastPoint: null,
-  mode: "draw",
-  roads: [],
-};
+let currentRoad = null;
+let lastPoint = null;
+let startPoint = null;
+let mode = "draw";
+let roads = [];
 
 const canvas = document.createElement("canvas");
 
@@ -18,7 +17,6 @@ document.body.appendChild(canvas);
 const ctx = canvas.getContext("2d");
 ctx.width = WIDTH;
 ctx.height = HEIGHT;
-console.log(ctx);
 
 class Vector {
   constructor(start, end) {
@@ -28,9 +26,9 @@ class Vector {
 }
 
 class Point {
-  constructor(start, end) {
-    this.start = start;
-    this.end = end;
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
   }
 }
 
@@ -42,36 +40,64 @@ class Road {
   }
 }
 
-const getClickPoint = (event) => {
-  let point = globalStateStore.lastPoint;
-  if (point) {
-    globalStateStore.lastPoint = null;
-    return new Point(point.start, { x: event.offsetY, y: event.offsetY });
+class StraightRoad extends Road {
+  constructor(lane, start, end) {
+    super(lane, start, end);
   }
-  return new Point(
-    { x: event.offsetY, y: event.offsetY },
-    { x: event.offsetY, y: event.offsetY },
-  );
-};
 
-document.addEventListener("mousedown", (event) => {
-  let point = getClickPoint(event);
-  if (globalStateStore.lastPoint === null) {
-    globalStateStore.lastPoint = point;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "black";
+  getAngle() {
+    const dx = this.end.x - this.start.x;
+    const dy = this.end.y - this.start.y;
+    const theta = Math.atan2(dy, dx);
+    return (theta * 180) / Math.PI;
+  }
+
+  draw(ctx) {
+    ctx.strokeStyle = "rgb(55,55,55)";
+    ctx.lineWidth = this.lane * 20;
     ctx.beginPath();
-    ctx.moveTo(
-      globalStateStore.lastPoint.start.x,
-      globalStateStore.lastPoint.start.y,
-    );
-    ctx.lineTo(
-      globalStateStore.lastPoint.end.x,
-      globalStateStore.lastPoint.end.y,
-    );
+    ctx.moveTo(this.start.x, this.start.y);
+    ctx.lineTo(this.end.x, this.end.y);
     ctx.stroke();
     ctx.closePath();
-  } else {
-    globalStateStore.lastPoint = null;
+    this.drawDivider(ctx);
+  }
+
+  drawDivider(ctx) {
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(this.start.x, this.start.y);
+    ctx.lineTo(this.end.x, this.end.y);
+    ctx.stroke();
+    ctx.closePath();
+  }
+}
+
+const getClickPoint = (event) => {
+  return new Point(event.offsetX, event.offsetY);
+};
+
+canvas.addEventListener("mousedown", (event) => {
+  let point = getClickPoint(event);
+  if (mode === "draw") {
+    if (startPoint !== null) {
+      lastPoint = point;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      roads.push(new StraightRoad(3, startPoint, lastPoint));
+      lastPoint = null;
+      startPoint = null;
+    } else {
+      startPoint = point;
+    }
+  }
+});
+
+canvas.addEventListener("mouseup", () => {
+  ctx.clearRect(0, 0, WIDTH, HEIGHT);
+  for (let road of roads) {
+    ctx.save();
+    road.draw(ctx);
+    ctx.restore();
   }
 });
