@@ -3,6 +3,7 @@ let lastPoint = null;
 let startPoint = null;
 let mode = "draw";
 let roads = [];
+console.log("Hello, World!");
 
 const canvas = document.createElement("canvas");
 
