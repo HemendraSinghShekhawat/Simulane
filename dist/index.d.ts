@@ -1,3 +1,2 @@
-declare function saveTheWorld(): string;
-export default saveTheWorld;
+export {};
 //# sourceMappingURL=index.d.ts.map
