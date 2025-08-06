@@ -1,0 +1,1 @@
+{"version":3,"file":"road.d.ts","sourceRoot":"","sources":["../../src/core/road.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,MAAM,EAAE,MAAM,kBAAkB,CAAC;AAE/C,qBAAa,IAAI;IACf,KAAK,EAAE,MAAM,CAAC;IACd,GAAG,EAAE,MAAM,CAAC;gBACA,KAAK,EAAE,MAAM,EAAE,GAAG,EAAE,MAAM;CAIvC;AAED,qBAAa,YAAa,SAAQ,IAAI;gBACxB,KAAK,EAAE,MAAM,EAAE,GAAG,EAAE,MAAM;CAGvC"}

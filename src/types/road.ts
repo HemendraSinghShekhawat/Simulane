@@ -1,0 +1,5 @@
+export enum RoadType {
+  STRAIGHT = "STRAIGHT",
+  CURVED = "CURVED",
+  INTERSECTION = "INTERSECTION",
+}
