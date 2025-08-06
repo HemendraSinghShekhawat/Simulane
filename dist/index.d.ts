@@ -1,2 +1,2 @@
-export declare const canvas: HTMLCanvasElement;
+import "./action.js";
 //# sourceMappingURL=index.d.ts.map
