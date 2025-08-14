@@ -1,3 +1,6 @@
+export const joinRoad: HTMLButtonElement = document.getElementById(
+  "join-road",
+) as HTMLButtonElement;
 export const createRoadButton: HTMLButtonElement = document.getElementById(
   "create-road",
 ) as HTMLButtonElement;

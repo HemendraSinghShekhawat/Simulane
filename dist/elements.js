@@ -1,3 +1,4 @@
+export const joinRoad = document.getElementById("join-road");
 export const createRoadButton = document.getElementById("create-road");
 export const canvas = document.createElement("canvas");
 document.body.append(canvas);

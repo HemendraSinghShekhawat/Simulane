@@ -1,4 +1,4 @@
-import { canvas, createRoadButton, ctx } from "./elements.js";
+import { canvas, createRoadButton, ctx, joinRoad } from "./elements.js";
 const WIDTH = document.body.clientWidth;
 const HEIGHT = document.body.clientHeight;
 const NODE_COLOR = "#A2A2A2";
@@ -9,6 +9,17 @@ let CREATE_NEW_ROAD = true;
 let APPEND_TO_ROAD = false;
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
+const joinNodes = (arr) => {
+    if (ctx !== null) {
+        if (arr.length > 1) {
+            arr.forEach((_, index) => {
+                if (index !== 0) {
+                    lineBetweenNodes(nodes[index - 1], nodes[index], ctx);
+                }
+            });
+        }
+    }
+};
 const getPosition = (event) => {
     const { x, y } = event;
     return { x, y };
@@ -41,17 +52,27 @@ function handleCanvasClick(event, ctx) {
     const pointWidth = 10;
     const halfOfPointWidth = pointWidth / 2;
     ctx.fillRect(x - halfOfPointWidth, y - halfOfPointWidth, pointWidth, pointWidth);
-    if (nodes.length > 1) {
-        lineBetweenNodes(nodes[nodes.length - 1], nodes[nodes.length - 2], ctx);
-    }
 }
 const action = () => {
     if (ctx === null) {
         console.error("ctx is null");
         return;
     }
-    canvas.addEventListener("click", (event) => handleCanvasClick(event, ctx));
-    createRoadButton.addEventListener("click", () => handleCreateNewRoad());
+    canvas.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        handleCanvasClick(event, ctx);
+    });
+    joinRoad.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        joinNodes(nodes);
+    });
+    createRoadButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        handleCreateNewRoad();
+    });
     ctx.fillStyle = "#E1E1E1";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 };
