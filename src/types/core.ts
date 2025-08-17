@@ -6,8 +6,10 @@ export interface IPoint {
 }
 
 export interface INode extends IPoint {
+  id: number;
   type: "node";
   elevation: number;
+  connectedTo: IPoint[];
 }
 
 export interface IRoad {

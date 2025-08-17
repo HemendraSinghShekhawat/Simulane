@@ -1,15 +1,18 @@
 import { canvas, createRoadButton, ctx, joinRoad } from "./elements.js";
 const WIDTH = document.body.clientWidth;
 const HEIGHT = document.body.clientHeight;
+const BACKGROUND_COLOR = "#111111";
 const NODE_COLOR = "#A2A2A2";
 const ROAD_SPLINE_COLOR = "#FF0000";
 let nodes = [];
 let roads = [];
 let CREATE_NEW_ROAD = true;
 let APPEND_TO_ROAD = false;
+let NODE_ID = 0;
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 const joinNodes = (arr) => {
+    console.log(arr);
     if (ctx !== null) {
         if (arr.length > 1) {
             arr.forEach((_, index) => {
@@ -43,11 +46,25 @@ function lineBetweenNodes(start, end, ctx) {
 function handleCanvasClick(event, ctx) {
     let { x, y } = getPosition(event);
     nodes.push({
+        id: NODE_ID,
         type: "node",
         elevation: 0,
         x,
         y,
+        connectedTo: nodes.length > 0 ? [nodes[nodes.length - 1]] : [],
     });
+    NODE_ID++;
+    if (nodes.length >= 2 &&
+        nodes[nodes.length - 2] !== undefined &&
+        Array.isArray(nodes[nodes.length - 2]?.connectedTo)) {
+        nodes[nodes.length - 2].connectedTo = [
+            ...nodes[nodes.length - 2].connectedTo,
+            nodes[nodes.length - 1],
+        ];
+    }
+    if (nodes.length === 2 && Array.isArray(nodes[0]?.connectedTo)) {
+        nodes[0].connectedTo = [nodes[1]];
+    }
     ctx.fillStyle = NODE_COLOR;
     const pointWidth = 10;
     const halfOfPointWidth = pointWidth / 2;
@@ -73,7 +90,8 @@ const action = () => {
         event.stopPropagation();
         handleCreateNewRoad();
     });
-    ctx.fillStyle = "#E1E1E1";
+    ctx.fillStyle = BACKGROUND_COLOR;
+    ctx.strokeStyle = BACKGROUND_COLOR;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 };
 action();

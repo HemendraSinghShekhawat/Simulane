@@ -4,8 +4,10 @@ export interface IPoint {
     y: number;
 }
 export interface INode extends IPoint {
+    id: number;
     type: "node";
     elevation: number;
+    connectedTo: IPoint[];
 }
 export interface IRoad {
     start: IPoint;
