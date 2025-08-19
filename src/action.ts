@@ -10,6 +10,9 @@ const ROAD_SPLINE_COLOR = "#FF0000";
 
 let nodes: INode[] = [];
 let roads: INode[][] = [];
+let boundingBox = [0, 0, WIDTH, HEIGHT];
+let scaleX = 1;
+let scaleY = 1;
 
 let CREATE_NEW_ROAD = true;
 let APPEND_TO_ROAD = false;
@@ -102,6 +105,29 @@ function handleCanvasClick(event: MouseEvent, ctx: CanvasRenderingContext2D) {
   );
 }
 
+const drawGrid = (
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+) => {
+  if (!ctx) return;
+  for (let i = width; i < canvas.height; i += width) {
+    ctx.beginPath();
+    ctx.moveTo(0, i);
+    ctx.lineTo(canvas.width, i);
+    ctx.closePath();
+    ctx.stroke();
+  }
+  for (let i = height; i < canvas.width; i += width) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, canvas.height);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.strokeText(`${i}`, i, i + 10);
+  }
+};
+
 const action = () => {
   if (ctx === null) {
     console.error("ctx is null");
@@ -112,6 +138,24 @@ const action = () => {
     event.preventDefault();
     event.stopPropagation();
     handleCanvasClick(event, ctx as CanvasRenderingContext2D);
+  });
+
+  canvas.addEventListener("wheel", (event) => {
+    if (!ctx) return;
+    const { offsetX, offsetY, deltaX, deltaY } = event;
+    console.log(offsetX, offsetY, event);
+    scaleX += 1 * (deltaX >= 0 ? 1 : -1);
+    scaleY += 1 * (deltaY >= 0 ? 1 : -1);
+    ctx.restore();
+    console.log(ctx);
+    ctx.scale(2, 2);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = BACKGROUND_COLOR;
+    ctx.strokeStyle = BACKGROUND_COLOR;
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    drawGrid(ctx, width, height);
+    ctx.save();
+    console.log(ctx.getTransform());
   });
 
   joinRoad.addEventListener("click", (event) => {
@@ -128,6 +172,10 @@ const action = () => {
   ctx.fillStyle = BACKGROUND_COLOR;
   ctx.strokeStyle = BACKGROUND_COLOR;
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
+  ctx.strokeStyle = "blue";
+  let width = 100;
+  let height = 100;
+  drawGrid(ctx, width, height);
 };
 
 action();
