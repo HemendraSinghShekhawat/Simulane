@@ -15,7 +15,6 @@ let NODE_ID = 0;
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 const joinNodes = (arr) => {
-    console.log(arr);
     if (ctx !== null) {
         if (arr.length > 1) {
             arr.forEach((_, index) => {
@@ -76,6 +75,7 @@ function handleCanvasClick(event, ctx) {
 const drawGrid = (ctx, width, height) => {
     if (!ctx)
         return;
+    ctx.strokeStyle = "blue";
     for (let i = width; i < canvas.height; i += width) {
         ctx.beginPath();
         ctx.moveTo(0, i);
@@ -103,22 +103,21 @@ const action = () => {
         handleCanvasClick(event, ctx);
     });
     canvas.addEventListener("wheel", (event) => {
+        event.preventDefault();
         if (!ctx)
             return;
-        const { offsetX, offsetY, deltaX, deltaY } = event;
-        console.log(offsetX, offsetY, event);
-        scaleX += 1 * (deltaX >= 0 ? 1 : -1);
-        scaleY += 1 * (deltaY >= 0 ? 1 : -1);
-        ctx.restore();
-        console.log(ctx);
-        ctx.scale(2, 2);
+        const { offsetX, offsetY, deltaY } = event;
+        scaleX = deltaY >= 0 ? 0.5 : 1.5;
+        scaleY = deltaY >= 0 ? 0.5 : 1.5;
+        ctx.scale(scaleX, scaleY);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = BACKGROUND_COLOR;
         ctx.strokeStyle = BACKGROUND_COLOR;
         ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        let width = 100;
+        let height = 100;
         drawGrid(ctx, width, height);
         ctx.save();
-        console.log(ctx.getTransform());
     });
     joinRoad.addEventListener("click", (event) => {
         event.preventDefault();
@@ -133,7 +132,6 @@ const action = () => {
     ctx.fillStyle = BACKGROUND_COLOR;
     ctx.strokeStyle = BACKGROUND_COLOR;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
-    ctx.strokeStyle = "blue";
     let width = 100;
     let height = 100;
     drawGrid(ctx, width, height);
